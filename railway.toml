@@ -3,6 +3,6 @@ builder="dockerfile"
 dockerfilePath="./dockertest/Dockerfile"
 
 [deploy]
-startCommand="./dickertest"
+startCommand="./dockertest"
 restartPolicyType="always"
 healthPolicyPath="/health"
