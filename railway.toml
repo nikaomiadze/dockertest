@@ -1,0 +1,8 @@
+[build]
+builder="dockerfile"
+dockerfilePath="./dockertest/Dickerfile"
+
+[deploy]
+startCommand="./dickertest"
+restartPolicyType="always"
+healthPolicyPath="/health"
