@@ -1,6 +1,6 @@
 [build]
 builder="dockerfile"
-dockerfilePath="./dockertest/Dickerfile"
+dockerfilePath="./dockertest/Dockerfile"
 
 [deploy]
 startCommand="./dickertest"
