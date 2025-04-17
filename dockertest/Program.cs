@@ -1,4 +1,6 @@
 
+using dockertest.models;
+
 namespace dockertest
 {
     public class Program
@@ -18,6 +20,8 @@ namespace dockertest
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.Configure<MongoDBSettings>(
+            builder.Configuration.GetSection("MongoDBSettings"));
 
             var app = builder.Build();
 
