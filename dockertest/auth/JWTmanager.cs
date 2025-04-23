@@ -20,7 +20,7 @@ namespace dockertest.auth
         {
             this.config = config;
         }
-        public Token GetToken(User user_model)
+        public Token GetToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.UTF8.GetBytes(config["JWT:Key"]);
@@ -28,7 +28,7 @@ namespace dockertest.auth
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("UserID",user_model.Id.ToString(),ClaimValueTypes.Integer),
+                    new Claim("UserID",user.Id.ToString(),ClaimValueTypes.Integer),
 
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(10),

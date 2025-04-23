@@ -33,7 +33,6 @@ namespace dockertest.Controllers
 
         [Authorize]
         [HttpGet("{deviceId}")]
-        [Authorize]
         public async Task<IActionResult> Get(string deviceId)
         {
             var data = await _sensorData.Find(d => d.DeviceId == deviceId)
