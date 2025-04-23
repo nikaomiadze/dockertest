@@ -16,7 +16,7 @@ namespace dockertest.Controllers
         public SensorDataController(IOptions<MongoDBSettings> settings)
         {
             var client = new MongoClient(settings.Value.ConnectionString);
-            var database = client.GetDatabase(settings.Value.DatabaseName);
+            var database = client.GetDatabase("Users");
             _collection = database.GetCollection<SensorData>(settings.Value.CollectionName);
         }
 
@@ -27,6 +27,8 @@ namespace dockertest.Controllers
             return Ok();
         }
 
+
+        [Authorize]
         [HttpGet("{deviceId}")]
         [Authorize]
         public async Task<IActionResult> Get(string deviceId)

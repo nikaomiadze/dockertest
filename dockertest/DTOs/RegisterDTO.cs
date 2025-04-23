@@ -1,8 +1,7 @@
-﻿namespace dockertest.models
+﻿namespace dockertest.DTOs
 {
-    public class User
+    public class RegisterDTO
     {
-        public string? Id { get; set; }
         public string? Username { get; set; }
         public string? Password { get; set; }
     }
