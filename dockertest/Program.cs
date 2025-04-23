@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using dockertest.Services;
 
 
 namespace dockertest
@@ -29,6 +30,7 @@ namespace dockertest
             builder.Services.AddScoped<IjwtManager, JWTmanager>();
             builder.Services.Configure<MongoDBSettings>(
             builder.Configuration.GetSection("MongoDBSettings"));
+            builder.Services.AddSingleton<MongoService>();
             builder.Services.AddSwaggerGen(option =>
             {
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

@@ -6,6 +6,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using dockertest.DTOs;
 using dockertest.auth;
+using dockertest.Services;
 
 
 namespace dockertest.Controllers
@@ -15,16 +16,12 @@ namespace dockertest.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMongoCollection<User> _users;
-        private readonly IjwtManager JWTmanager;
+        private readonly IjwtManager _jwtManager;
 
-
-        public UserController(IOptions<MongoDBSettings> settings, IjwtManager JWTmanager)
+        public UserController(MongoService mongoService, IjwtManager jwtManager)
         {
-            var client = new MongoClient(settings.Value.ConnectionString);
-            var database = client.GetDatabase("Users");
-            _users = database.GetCollection<User>(settings.Value.CollectionName);
-            this.JWTmanager = JWTmanager;
-
+            _users = mongoService.UsersCollection;
+            _jwtManager = jwtManager;
         }
 
         [HttpPost("register")]
@@ -52,7 +49,7 @@ namespace dockertest.Controllers
             if (user == null)
                 return Unauthorized("Invalid username or password");
 
-            var token = JWTmanager.GetToken(user);
+            var token = _jwtManager.GetToken(user);
             return Ok(token);
         }
 
