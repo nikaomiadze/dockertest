@@ -21,5 +21,8 @@ namespace dockertest.models
 
         [Range(300, 5000)]
         public int CO2 { get; set; }
+
+        [Range(0,100)]
+        public int Humidity { get; set; }
     }
 }
