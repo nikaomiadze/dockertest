@@ -29,9 +29,10 @@ namespace dockertest.Controllers
             var filter = Builders<SensorData>.Filter.Eq(d => d.DeviceId, data.DeviceId);
 
             var update = Builders<SensorData>.Update
-                .Set(d => d.Temperature, data.Temperature)
-                .Set(d => d.Humidity, data.Humidity)
-                .Set(d => d.Timestamp, data.Timestamp);
+             .Set(d => d.Temperature, data.Temperature)
+             .Set(d => d.Humidity, data.Humidity)
+             .Set(d => d.CO2, data.CO2)
+             .Set(d => d.Timestamp, data.Timestamp);
 
             var options = new UpdateOptions { IsUpsert = true };
 
