@@ -36,7 +36,7 @@ namespace dockertest.Controllers
                 throw new Exception("Username already exists");
 
             var user = new User
-            {
+            {   Id = registerDto.Id,
                 Username = registerDto.Username,
                 Password = registerDto.Password,
             };

@@ -18,7 +18,7 @@ namespace dockertest.Services
             var client = new MongoClient(settings.Value.ConnectionString);
 
             var usersDb = client.GetDatabase(settings.Value.UsersDatabaseName);
-            var co2Db = client.GetDatabase(settings.Value.DeviceDatabaseName);
+            var co2Db = client.GetDatabase(settings.Value.SensorDataDatabaseName);
             var deviceDb = client.GetDatabase(settings.Value.DeviceDatabaseName);
 
             UsersCollection = usersDb.GetCollection<User>(settings.Value.UsersCollectionName);

@@ -20,20 +20,29 @@ namespace dockertest.Controllers
             {
                 _sensorData = mongoService.SensorDataCollection;
             }
-        
+
 
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] SensorData data)
         {
-            await _sensorData.InsertOneAsync(data);
-            return Ok();
-        }
+            var filter = Builders<SensorData>.Filter.Eq(d => d.DeviceId, data.DeviceId);
 
+            var update = Builders<SensorData>.Update
+             .Set(d => d.Temperature, data.Temperature)
+             .Set(d => d.Humidity, data.Humidity)
+             .Set(d => d.CO2, data.CO2)
+             .Set(d => d.Timestamp, data.Timestamp);
+
+            var options = new UpdateOptions { IsUpsert = true };
+
+            await _sensorData.UpdateOneAsync(filter, update, options);
+
+            return Ok(new { message = "Sensor data inserted or updated successfully." });
+        }
 
         [Authorize]
         [HttpGet("{deviceId}")]
-        [Authorize]
         public async Task<IActionResult> Get(string deviceId)
         {
             var data = await _sensorData.Find(d => d.DeviceId == deviceId)
