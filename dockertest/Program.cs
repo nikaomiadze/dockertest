@@ -1,12 +1,10 @@
-
-using dockertest.auth;
+﻿using dockertest.auth;
 using dockertest.models;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using dockertest.Services;
-
 
 namespace dockertest
 {
@@ -21,16 +19,15 @@ namespace dockertest
 
             builder.Services.AddHealthChecks();
 
-            // Add services to the container.
-
+            // ✅ Add services before builder.Build()
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IjwtManager, JWTmanager>();
             builder.Services.Configure<MongoDBSettings>(
-            builder.Configuration.GetSection("MongoDBSettings"));
+                builder.Configuration.GetSection("MongoDBSettings"));
             builder.Services.AddSingleton<MongoService>();
+
             builder.Services.AddSwaggerGen(option =>
             {
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -77,24 +74,38 @@ namespace dockertest
                 };
             });
 
+            builder.Services.AddAuthorization();
+
+            // ✅ CORRECT: Add CORS BEFORE builder.Build()
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
+            // ✅ Now build the app
             var app = builder.Build();
-            
-            // Configure the HTTP request pipeline.
+
+            // ✅ Middleware configuration
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseHealthChecks("/healt");
 
+            app.UseHealthChecks("/healt");
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-            builder.Services.AddAuthorization();
+            app.UseCors("AllowFrontend");
 
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllers();
-
             app.Run();
         }
     }
