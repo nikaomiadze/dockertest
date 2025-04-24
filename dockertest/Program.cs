@@ -78,6 +78,15 @@ namespace dockertest
             });
 
             var app = builder.Build();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
