@@ -1,4 +1,3 @@
-
 using dockertest.auth;
 using dockertest.models;
 using Microsoft.OpenApi.Models;
@@ -6,7 +5,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using dockertest.Services;
-
 
 namespace dockertest
 {
@@ -22,8 +20,30 @@ namespace dockertest
             builder.Services.AddHealthChecks();
 
             // Add services to the container.
-
             builder.Services.AddControllers();
+
+            // Add CORS policy
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:4200") // Your Angular app origin
+                              .AllowAnyHeader()
+                              .AllowAnyMethod()
+                              .AllowCredentials(); // If you're using cookies or auth headers
+                    });
+
+                // Optional: Add a more permissive policy for development
+                options.AddPolicy("AllowAll",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin()
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -84,14 +104,25 @@ namespace dockertest
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                // Use the more permissive CORS policy in development
+                app.UseCors("AllowAll");
             }
+            else
+            {
+                // Use the specific CORS policy in production
+                app.UseCors("AllowSpecificOrigin");
+            }
+
             app.UseHealthChecks("/healt");
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-            builder.Services.AddAuthorization();
+            // The order of these middleware calls is important
+            app.UseRouting();
+            app.UseCors(); // Make sure this comes after UseRouting and before UseAuthentication
 
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllers();
 
