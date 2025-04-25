@@ -18,33 +18,27 @@ namespace dockertest
             builder.WebHost.UseUrls($"http://*:{port}");
 
             builder.Services.AddHealthChecks();
-
-            // Add services to the container.
             builder.Services.AddControllers();
 
-            // Add CORS policy
+            // Add CORS policy - SINGLE DEFINITION (remove the duplicate)
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowSpecificOrigin",
-                    policy =>
-                    {
-                        policy.WithOrigins("http://localhost:4200") // Your Angular app origin
-                              .AllowAnyHeader()
-                              .AllowAnyMethod()
-                              .AllowCredentials(); // If you're using cookies or auth headers
-                    });
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
 
-                // Optional: Add a more permissive policy for development
-                options.AddPolicy("AllowAll",
-                    policy =>
-                    {
-                        policy.AllowAnyOrigin()
-                              .AllowAnyHeader()
-                              .AllowAnyMethod();
-                    });
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
             });
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IjwtManager, JWTmanager>();
@@ -100,43 +94,26 @@ namespace dockertest
 
             builder.Services.AddAuthorization();
 
-            // ✅ CORRECT: Add CORS BEFORE builder.Build()
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowFrontend", policy =>
-                {
-                    policy.WithOrigins("http://localhost:4200")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
-                });
-            });
-
-            // ✅ Now build the app
             var app = builder.Build();
 
-            // ✅ Middleware configuration
+            // Middleware configuration
+            app.UseRouting();
+
+            // CORS middleware - use the specific policy name
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-                // Use the more permissive CORS policy in development
                 app.UseCors("AllowAll");
             }
             else
             {
-                // Use the specific CORS policy in production
-                app.UseCors("AllowSpecificOrigin");
+                app.UseCors("AllowFrontend");
             }
 
-            app.UseHealthChecks("/healt");
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHealthChecks("/healt");
             app.UseHttpsRedirection();
-
-            // The order of these middleware calls is important
-            app.UseRouting();
-            app.UseCors(); // Make sure this comes after UseRouting and before UseAuthentication
-
             app.UseAuthentication();
             app.UseAuthorization();
 
