@@ -74,7 +74,6 @@ namespace dockertest.Controllers
             }
         }
 
-        [Authorize]
         [HttpPost("add-device")]
         public async Task<IActionResult> AddDevice([FromBody] AddDeviceDTO deviceDto)
         {
@@ -104,7 +103,7 @@ namespace dockertest.Controllers
             }
         }
 
-        [Authorize]
+        
         [HttpGet("devices")]
         public async Task<IActionResult> GetDevicesByUserId()
         {
