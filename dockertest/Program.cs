@@ -25,8 +25,11 @@ namespace dockertest
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200")
-                          .AllowAnyHeader()
+                    policy.WithOrigins(
+                     "http://localhost:4200", 
+                     "https://nikaomiadze.github.io" 
+                     )
+                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
                 });
