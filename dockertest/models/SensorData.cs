@@ -23,7 +23,7 @@ namespace dockertest.models
         [BsonElement("temperature")]
         public double Temperature { get; set; }
 
-        [Range(300, 5000, ErrorMessage = "CO2 level must be between 300 and 5000 ppm.")]
+        [Range(0, 5000, ErrorMessage = "CO2 level must be between 300 and 5000 ppm.")]
         [BsonElement("co2")]
         public int CO2 { get; set; }
 
